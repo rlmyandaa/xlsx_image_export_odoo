@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.xlsx_image_export</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="40"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block"
+                         data-string="XLSX Image Export"
+                         string="XLSX Image Export"
+                         data-key="xlsx_image_export">
+                        
+                        <h2>XLSX Image Export Modules</h2>
+                        <div class="row mt16 o_settings_container" style="width: 100% !important">
+                            <div class="col-12 col-lg-6 o_setting_box" title=" ">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Enable XLSX Image Export</span>
+                                    <div class="text-muted">
+                                        Enable XLSX Image Export
+                                    </div>
+                                     <div class="content-group" >
+                                        <field name="enable_xlsx_image_export"/>
+                                    </div>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Additional Setting</span>
+                                    <div class="text-muted">
+                                        Max Height for Image in Cell
+                                    </div>
+                                     <div class="content-group" >
+                                        <field name="cell_max_height_px"/>
+                                    </div>
+                                    <div class="text-muted">
+                                        Spacing in percent for Image in Cell (in Percent)
+                                    </div>
+                                     <div class="content-group" >
+                                        <field name="cell_image_spacing_percent" widget="percentage"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_xlsx_image_export_config" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'xlsx_image_export'}</field>
+        </record>
+</odoo>
