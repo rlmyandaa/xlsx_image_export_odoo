@@ -14,10 +14,10 @@ Export image from image fields directly to Excel and get valid image, rather tha
 - Do some export from any model.
 
 ## Screenshot
+<img width="848" alt="Screenshot 2023-05-17 at 09 08 27" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/f60b5a8b-9248-4aee-b48b-a50c57a65bc6">
+<img width="1440" alt="Screenshot 2023-05-17 at 09 18 33" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/4ab544f2-7213-4e56-a1af-e5a1e0e0c47a">
+<img width="1440" alt="Screenshot 2023-05-17 at 09 18 45" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/eeebcd1a-330a-464f-b91f-2e1e1b9d8f11">
 
-<img width="848" alt="Screenshot 2023-05-17 at 09 08 27" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/e5f10a3f-0e32-4dad-9ef9-66eef3709f64">
-<img width="1440" alt="Screenshot 2023-05-17 at 09 18 33" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/8303293f-a6fe-43ff-8940-16b57133894b">
-<img width="1440" alt="Screenshot 2023-05-17 at 09 18 45" src="https://github.com/rlmyandaa/xlsx_image_export_odoo/assets/49233604/3c0dc307-539b-4d38-bb32-5d8dd24c8eda">
 
 ## Limitation
 
