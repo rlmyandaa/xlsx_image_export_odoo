@@ -14,7 +14,10 @@ import base64
 import xlsxwriter
 from odoo.http import request
 from odoo.addons.base.models.ir_config_parameter import IrConfigParameter
-from .utils import pixels_to_height, pixels_to_width, get_tolerance
+from .utils import pixels_to_height, pixels_to_width, get_tolerance, CONFIG_PREFIX
+import logging
+
+_logger = logging.getLogger(__name__)
 
 """
 Set the max height pixel value for image column and toleration value.
@@ -54,9 +57,10 @@ def write_cell(self, row, column, cell_value):
                     self.write_image(row, column, cell_value)
                     # Skip normal writing
                     skip = True
-                except UserError:
+                except Exception as e:
                     # If not a valid image base64, fallback to original function
                     skip = False
+                    _logger.exception(e)
 
             # If not an image, fallback to original function
             if not skip:
@@ -66,16 +70,20 @@ def write_cell(self, row, column, cell_value):
             raise UserError(
                 _("Binary fields can not be exported to Excel unless their content is base64-encoded. That does not seem to be the case for %s.") % self.field_names[column])
 
+    elif isinstance(cell_value, (list, tuple, dict)):
+        cell_value = pycompat.to_text(cell_value)
+
     if isinstance(cell_value, str):
         if len(cell_value) > self.worksheet.xls_strmax:
-            cell_value = _(
-                "The content of this cell is too long for an XLSX file (more than %s characters). Please use the CSV format for this export.") % self.worksheet.xls_strmax
+            cell_value = _("The content of this cell is too long for an XLSX file (more than %s characters). Please use the CSV format for this export.", self.worksheet.xls_strmax)
         else:
             cell_value = cell_value.replace("\r", " ")
     elif isinstance(cell_value, datetime.datetime):
         cell_style = self.datetime_style
     elif isinstance(cell_value, datetime.date):
         cell_style = self.date_style
+    elif isinstance(cell_value, float):
+        cell_style.set_num_format(self.float_format)
     if not skip:
         self.write(row, column, cell_value, cell_style)
 
@@ -126,15 +134,15 @@ def write_image(self, row, column, base64_source: ImageProcess):
     # The downside is that due to the image are being resized, there might be some quality loss
     # especially if user tries to upscale the image in the final excel file.
     # Use PNG to get the best quality.
-    image_obj = ImageProcess(base64_source)
+    image_obj = ImageProcess(base64.b64decode(base64_source))
     image_obj.resize(max_height=self.cell_max_height_px)
-    resized_img_b64 = image_obj.image_base64(
+    resized_img = image_obj.image_quality(
         quality=False,
         output_format='PNG'
     )
 
     # Convert to bytesio
-    image_data = io.BytesIO(base64.b64decode(resized_img_b64))
+    image_data = io.BytesIO(resized_img)
 
     # Set row height, add some tolerance to get some spacing in the cell.
     self.worksheet.set_row(row, height=pixels_to_height(get_tolerance(self.cell_image_spacing_percent,
@@ -154,14 +162,15 @@ def __init__(self, field_names, row_count=0):
     self.workbook = xlsxwriter.Workbook(self.output, {'in_memory': True})
     self.base_style = self.workbook.add_format({'text_wrap': True})
     self.header_style = self.workbook.add_format({'bold': True})
-    self.header_bold_style = self.workbook.add_format(
-        {'text_wrap': True, 'bold': True, 'bg_color': '#e9ecef'})
-    self.date_style = self.workbook.add_format(
-        {'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
-    self.datetime_style = self.workbook.add_format(
-        {'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
+    self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': '#e9ecef'})
+    self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
+    self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
     self.worksheet = self.workbook.add_worksheet()
     self.value = False
+    self.float_format = '#,##0.00'
+    decimal_places = [res['decimal_places'] for res in
+                        request.env['res.currency'].search_read([], ['decimal_places'])]
+    self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
 
     # XLSX Image Export variables
     self.use_max_width = False
@@ -173,18 +182,17 @@ def __init__(self, field_names, row_count=0):
     self._check_xlsx_image_export()
 
     if row_count > self.worksheet.xls_rowmax:
-        raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') %
-                        (row_count, self.worksheet.xls_rowmax))
+                raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
 
 
 def _check_xlsx_image_export(self):
     ir_config_param: IrConfigParameter = request.env['ir.config_parameter'].sudo(
     )
     enable_xlsx_image_export = ir_config_param.get_param(
-        'xlsx_image_export.enable_xlsx_image_export')
+        '{}.enable_xlsx_image_export'.format(CONFIG_PREFIX))
     if enable_xlsx_image_export:
         self.enable_xlsx_image_export = True
         self.cell_max_height_px = float(ir_config_param.get_param(
-            'xlsx_image_export.cell_max_height_px')) or MAX_HEIGHT_IMAGE_CELL
+            '{}.cell_max_height_px'.format(CONFIG_PREFIX))) or MAX_HEIGHT_IMAGE_CELL
         self.cell_image_spacing_percent = (float(ir_config_param.get_param(
-            'xlsx_image_export.cell_image_spacing_percent')) * 100) or IMAGE_CELL_TOLERATION_PERCENT
+            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX))) * 100) or IMAGE_CELL_TOLERATION_PERCENT

@@ -12,7 +12,7 @@
     'author': "Hersyanda Putra Adi",
     'website': "https://www.hrsynd.site",
     'category': 'Uncategorized',
-    'version': '1.0',
+    'version': '17.0.0.0',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'web'],

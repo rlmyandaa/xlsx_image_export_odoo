@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
         <record id="res_config_settings_view_form" model="ir.ui.view">
-            <field name="name">res.config.settings.view.form.inherit.xlsx_image_export</field>
+            <field name="name">res.config.settings.view.form.inherit.xlsx_image_export_odoo</field>
             <field name="model">res.config.settings</field>
             <field name="priority" eval="40"/>
             <field name="inherit_id" ref="base.res_config_settings_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('settings')]" position="inside">
-                    <div class="app_settings_block"
-                         data-string="XLSX Image Export"
-                         string="XLSX Image Export"
-                         data-key="xlsx_image_export_odoo">
+                <xpath expr="//form" position="inside" >
+                    <app data-string="XLSX Image Export" string="XLSX Image Export" name="xlsx_image_export_odoo">
+                        <block title="Enable Module" name="xlsx_image_export_setting_container">
+                            <setting id="xlsx_image_export_enable_setting" title="Enable XLSX Image Export" help="Enable XLSX Image Export">
+                                <field name="enable_xlsx_image_export"/>
+                            </setting>
+                        </block>
+                        <block title="Image Export Settings" name="xlsx_image_export_setting_container">
+                            <setting id="xlsx_image_export_max_height_setting" title="Max Height for Image in Cell">
+                                <field name="cell_max_height_px"/><span>px</span>
+                            </setting>
+                            <setting id="xlsx_image_export_spacing_setting" title="Spacing in percent for Image in Cell (in Percent)">
+                                <field name="cell_image_spacing_percent" widget="percentage"/>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+                <!-- <xpath expr="//div[hasclass('settings')]" position="inside">
                         
                         <h2>XLSX Image Export Modules</h2>
                         <div class="row mt16 o_settings_container" style="width: 100% !important">
@@ -43,7 +56,7 @@
                             </div>
                         </div>
                     </div>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
 
