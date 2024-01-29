@@ -10,7 +10,7 @@
                     <div class="app_settings_block"
                          data-string="XLSX Image Export"
                          string="XLSX Image Export"
-                         data-key="xlsx_image_export">
+                         data-key="xlsx_image_export_odoo">
                         
                         <h2>XLSX Image Export Modules</h2>
                         <div class="row mt16 o_settings_container" style="width: 100% !important">
