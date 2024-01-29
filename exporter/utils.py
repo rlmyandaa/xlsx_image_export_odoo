@@ -21,3 +21,6 @@ def pixels_to_width(pixels):
 
 def get_tolerance(tolerance_percent: int, raw_value):
     return raw_value + (raw_value * (tolerance_percent / 100))
+
+# CONSTANT
+CONFIG_PREFIX = 'xlsx_image_export_odoo'
