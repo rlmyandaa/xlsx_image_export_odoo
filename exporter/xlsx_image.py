@@ -14,7 +14,7 @@ import base64
 import xlsxwriter
 from odoo.http import request
 from odoo.addons.base.models.ir_config_parameter import IrConfigParameter
-from .utils import pixels_to_height, pixels_to_width, get_tolerance
+from .utils import pixels_to_height, pixels_to_width, get_tolerance, CONFIG_PREFIX
 
 """
 Set the max height pixel value for image column and toleration value.
@@ -181,10 +181,10 @@ def _check_xlsx_image_export(self):
     ir_config_param: IrConfigParameter = request.env['ir.config_parameter'].sudo(
     )
     enable_xlsx_image_export = ir_config_param.get_param(
-        'xlsx_image_export.enable_xlsx_image_export')
+        '{}.enable_xlsx_image_export'.format(CONFIG_PREFIX))
     if enable_xlsx_image_export:
         self.enable_xlsx_image_export = True
         self.cell_max_height_px = float(ir_config_param.get_param(
-            'xlsx_image_export.cell_max_height_px')) or MAX_HEIGHT_IMAGE_CELL
+            '{}.cell_max_height_px'.format(CONFIG_PREFIX))) or MAX_HEIGHT_IMAGE_CELL
         self.cell_image_spacing_percent = (float(ir_config_param.get_param(
-            'xlsx_image_export.cell_image_spacing_percent')) * 100) or IMAGE_CELL_TOLERATION_PERCENT
+            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX))) * 100) or IMAGE_CELL_TOLERATION_PERCENT

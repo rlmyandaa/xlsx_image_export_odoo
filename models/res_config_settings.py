@@ -1,6 +1,7 @@
 from email.policy import default
 from odoo import fields, models, api
 from odoo.addons.base.models.ir_config_parameter import IrConfigParameter
+from ..exporter.utils import CONFIG_PREFIX
 
 
 class ResConfigSettings(models.TransientModel):
@@ -17,13 +18,13 @@ class ResConfigSettings(models.TransientModel):
         res = super(ResConfigSettings, self).set_values()
         ir_config_param: IrConfigParameter = self.env['ir.config_parameter']
         ir_config_param.set_param(
-            'xlsx_image_export.enable_xlsx_image_export', self.enable_xlsx_image_export
+            '{}.enable_xlsx_image_export'.format(CONFIG_PREFIX), self.enable_xlsx_image_export
         )
         ir_config_param.set_param(
-            'xlsx_image_export.cell_max_height_px', self.cell_max_height_px
+            '{}.cell_max_height_px'.format(CONFIG_PREFIX), self.cell_max_height_px
         )
         ir_config_param.set_param(
-            'xlsx_image_export.cell_image_spacing_percent', self.cell_image_spacing_percent / 100
+            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX), self.cell_image_spacing_percent
         )
         return res
 
@@ -32,11 +33,11 @@ class ResConfigSettings(models.TransientModel):
         ir_config_param: IrConfigParameter = self.env['ir.config_parameter'].sudo(
         )
         enable_xlsx_image_export = ir_config_param.get_param(
-            'xlsx_image_export.enable_xlsx_image_export')
+            '{}.enable_xlsx_image_export'.format(CONFIG_PREFIX))
         cell_max_height_px = float(ir_config_param.get_param(
-            'xlsx_image_export.cell_max_height_px'))
+            '{}.cell_max_height_px'.format(CONFIG_PREFIX)))
         cell_image_spacing_percent = float(ir_config_param.get_param(
-            'xlsx_image_export.cell_image_spacing_percent'))
+            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX)))
         res.update(
             enable_xlsx_image_export=enable_xlsx_image_export,
             cell_max_height_px=cell_max_height_px or 150,
