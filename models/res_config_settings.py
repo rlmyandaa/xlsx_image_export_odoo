@@ -24,7 +24,7 @@ class ResConfigSettings(models.TransientModel):
             '{}.cell_max_height_px'.format(CONFIG_PREFIX), self.cell_max_height_px
         )
         ir_config_param.set_param(
-            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX), self.cell_image_spacing_percent
+            '{}.cell_image_spacing_percent'.format(CONFIG_PREFIX), self.cell_image_spacing_percent / 100
         )
         return res
 
